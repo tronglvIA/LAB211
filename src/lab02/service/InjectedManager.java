@@ -5,7 +5,6 @@ import lab02.util.GFile;
 import lab02.util.Input;
 import lab02.model.Injection;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 public class InjectedManager {
@@ -152,7 +151,7 @@ public class InjectedManager {
             System.out.println(injection.toString());
             LocalDate secondDate = Input.getDate("\t\t\tSecond Injected Date (DD/MM/YYYY): ", injection.getFirstDate());
 
-            long distanceTime = ChronoUnit.DAYS.between(injection.getFirstDate(), secondDate);
+            int distanceTime = secondDate.compareTo(injection.getFirstDate());
             if (distanceTime >= 28){
                 if (isSecondInjected(injection)){
                     updateInfoSecondInjection(injection, secondDate);
