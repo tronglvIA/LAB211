@@ -1,5 +1,6 @@
 package lab02.service;
 
+import lab02.model.Student;
 import lab02.util.GFile;
 import lab02.util.Input;
 import lab02.model.Injection;
@@ -16,6 +17,16 @@ public class InjectedManager {
         listInjection = new ArrayList<>();
         studentManager = new StudentManager();
         vaccineManager = new VaccineManager();
+        loadData();
+    }
+
+    private void loadData(){
+        /* Init a Path to save file. */
+        String pathFile = "./src/lab02/data/injection.dat";
+
+        /* read data to from binary file. */
+        GFile<Injection> injectionFileManager = new GFile<>(pathFile);
+        listInjection = injectionFileManager.readObject("GET INJECTION-DATA FROM FILE SUCCESSFULLY.");
     }
 
 
@@ -42,8 +53,12 @@ public class InjectedManager {
         System.out.println("\t\t\t\t\t=====================================");
         Input.header();
 
-        for (Injection injected: listInjection) {
-            System.out.println(injected.toString());
+        if ( listInjection != null){
+            for (Injection injected: listInjection) {
+                System.out.println(injected.toString());
+            }
+        } else {
+            System.out.println("NO ONE STUDENT GETS INJECTED!!!");
         }
     }
 
@@ -61,20 +76,23 @@ public class InjectedManager {
 
             /* Checking student is FPTer by studentID && listInjection not duplicate studentID;
                listInjection duplicate injectionID && VaccineId is valid in list vaccineData */
-            if (studentManager.getStudentById(injection.getStudentId()) != null && !containStudentID(injection.getStudentId())){
+            if (studentManager.getStudentById(injection.getStudentId()) != null && !injectedContainStudentID(injection.getStudentId())){
                 if (!listInjection.contains(injection) && vaccineManager.isValid(injection.getVaccineId())){
                     listInjection.add(injection);
                     System.out.println("ADDING SUCCESSFULLY.");
-                } else if(listInjection.contains(injection)){
-                    System.out.println("ADDING FAILED ==> DUPLICATE injectedID!!!");
-                } else{
-                    System.out.println("ADDING FAILED ==> VACCINE '" + injection.getVaccineId() + "' IS NOT IN LIST vaccine.dat!!!");
+                } else {
+                    if(listInjection.contains(injection)){
+                        System.out.println("ADDING FAILED ==> DUPLICATE injectedID!!!");
+                    } else{
+                        System.out.println("ADDING FAILED ==> VACCINE '" + injection.getVaccineId() + "' IS NOT IN LIST vaccine.dat!!!");
+                    }
                 }
             } else {
                 if (studentManager.getStudentById(injection.getStudentId()) == null){
                     System.out.println("ADDING FAILED ==> STUDENT '" + injection.getStudentId() + "' IS NOT IN FPT!!!" );
                 } else{
-                    System.out.println("ADDING FAILED ==> STUDENT '" + injection.getStudentId() + "' EXIST IN LIST!!!" );
+                    System.out.println("ADDING FAILED ==> STUDENT '" + injection.getStudentId() + "' EXISTED IN LIST INJECTION - " +
+                                                                                            "YOU SHOULD CHOICE UPDATE FUNCTION !!!" );
                 }
             }
 
@@ -105,7 +123,7 @@ public class InjectedManager {
         return result;
     }
 
-    private boolean containStudentID(String studentId){
+    private boolean injectedContainStudentID(String studentId){
         for(Injection injection: listInjection){
             if(injection.getStudentId().equalsIgnoreCase(studentId)){
                 return true;
@@ -133,6 +151,7 @@ public class InjectedManager {
             Input.header();
             System.out.println(injection.toString());
             LocalDate secondDate = Input.getDate("\t\t\tSecond Injected Date (DD/MM/YYYY): ", injection.getFirstDate());
+
             long distanceTime = ChronoUnit.DAYS.between(injection.getFirstDate(), secondDate);
             if (distanceTime >= 28){
                 if (isSecondInjected(injection)){
@@ -145,7 +164,7 @@ public class InjectedManager {
                 System.out.println("FIRST INJECTED IS NOT ENOUGH DISTANCE-TIME ==> COME BACK AFTER " + (28-distanceTime) + " DAYS");
             }
         }else{
-            System.out.println("UPDATE FAILED ==> injectionID: " + injectionID + " DOES NOT EXIST!!!");
+            System.out.println("UPDATE FAILED ==> injectionID: '" + injectionID + "' DOES NOT EXIST!!!");
         }
     }
 
@@ -185,12 +204,12 @@ public class InjectedManager {
             System.out.println(injection.toString());
             if (Input.confirm("Are you sure to DELETE this Injection? [Y|N]: ")){
                 listInjection.remove(getInjectionById(injectionID));
-                System.out.println("DELETE " + injectionID + " SUCCESSFULLY.");
+                System.out.println("DELETE '" + injectionID + "' SUCCESSFULLY.");
             } else{
                 System.out.println("DELETE CANCEL.");
             }
         } else {
-            System.out.println("DELETE FAILED ==> " + injectionID + " NOT FOUND!!!");
+            System.out.println("DELETE FAILED ==> '" + injectionID + "' NOT FOUND!!!");
         }
     }
 

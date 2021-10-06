@@ -86,11 +86,14 @@ public class Input {
                 System.out.print(message);
                 dateInput = scanner.nextLine();
                 if (isValid(dateInput)){
+                    //Convert dayString to localDate
                     parsingDate = LocalDate.parse(dateInput, formatDate);
+                    // Checking day must be >= BoundDay !!!
                     if(parsingDate.isAfter(bound) || parsingDate.equals(bound)){
                         return parsingDate;
                     } else {
-                        System.out.println("DAYTIME MUST BE AFTER OR IS " + bound.format(formatDate));
+                        // Notification Invalid
+                        System.out.println("DAYTIME MUST BE >= " + bound.format(formatDate));
                     }
                 } else {
                     throw new Exception();

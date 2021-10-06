@@ -10,7 +10,7 @@ public class Program {
         while(true){
             injectedManager.menu();
             option = Input.getInteger("Your Choice: ",
-                                      "MUST BE NUMERIC IN RANGE(1,6) ALSO THIS FIELD NOT NULL!!!");
+                                      "MUST BE NUMERIC INTEGER IN RANGE(1,6) ALSO THIS FIELD NOT NULL!!!");
             switch (option){
                 case 1:
                     injectedManager.displayInjectedInfo();
