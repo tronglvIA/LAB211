@@ -5,6 +5,7 @@ import lab02.util.GFile;
 import lab02.util.Input;
 import lab02.model.Injection;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 public class InjectedManager {
@@ -149,19 +150,20 @@ public class InjectedManager {
         if (injection != null){
             Input.header();
             System.out.println(injection.toString());
-            LocalDate secondDate = Input.getDate("\t\t\tSecond Injected Date (DD/MM/YYYY): ", injection.getFirstDate());
 
-            int distanceTime = secondDate.compareTo(injection.getFirstDate());
-            if (distanceTime >= 28){
-                if (isSecondInjected(injection)){
+            if (isSecondInjected(injection)){
+                LocalDate secondDate = Input.getDate("\t\t\tSecond Injected Date (DD/MM/YYYY): ", injection.getFirstDate());
+                long distanceTime = ChronoUnit.DAYS.between(injection.getFirstDate(), secondDate);
+                if (distanceTime >= 28){
                     updateInfoSecondInjection(injection, secondDate);
                     System.out.println("UPDATE SUCCESSFULLY.");
-                }else {
-                    System.out.println("UPDATE FAILED!!! ==> STUDENT HAS COMPLETED 2 INJECTIONS.");
+                } else {
+                    System.out.println("FIRST INJECTED IS NOT ENOUGH DISTANCE-TIME ==> COME BACK AFTER " + (28-distanceTime) + " DAYS");
                 }
-            } else{
-                System.out.println("FIRST INJECTED IS NOT ENOUGH DISTANCE-TIME ==> COME BACK AFTER " + (28-distanceTime) + " DAYS");
+            } else {
+                System.out.println("UPDATE FAILED!!! ==> STUDENT HAS COMPLETED 2 INJECTIONS.");
             }
+
         }else{
             System.out.println("UPDATE FAILED ==> injectionID: '" + injectionID + "' DOES NOT EXIST!!!");
         }
